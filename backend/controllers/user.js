@@ -6,12 +6,12 @@ const CryptoJS = require('crypto-js');
 
 
 exports.signup = (req, res, next) => {
-    const cryptedEmail = CryptoJS.AES.encrypt(req.body.email, 'secret key 123').toString();
-    console.log(cryptedEmail);
+    const emailCryptoJs = CryptoJS.HmacSHA256(req.body.email, `codeSecret`).toString();
+    console.log(emailCryptoJs);
     bcrypt.hash(req.body.password, 10)
       .then(hash => {
         const user = new User({
-          email: cryptedEmail,
+          email: emailCryptoJs,
           password: hash,
         });
         user.save()
@@ -22,10 +22,9 @@ exports.signup = (req, res, next) => {
   };
 
   exports.login = (req, res, next) => {
-    const cryptedEmail = CryptoJS.AES.encrypt(req.body.email, 'secret key 123').toString();
-    
-    console.log(cryptedEmail)
-    User.findOne({ email: cryptedEmail })
+    const emailCryptoJs = CryptoJS.HmacSHA256(req.body.email, `codeSecret`).toString();
+    console.log(emailCryptoJs)
+    User.findOne({ email: emailCryptoJs })
         .then(user => {
             if (!user) {
                 return res.status(401).json({ error: 'Utilisateur non trouvé !' });
