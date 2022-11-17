@@ -1,3 +1,6 @@
+// CREATION SU SERVEUR EXPRESS ET CONFIGURATION 
+
+// https pour la sécurité du transfert des données
 const http = require('http');
 const app = require('./app');
 

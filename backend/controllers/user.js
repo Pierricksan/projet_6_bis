@@ -1,10 +1,15 @@
 const User = require('../models/User');
+
+// plugins pour la sécurité de l'application 
+// sécurité pour le cryptage des mots de passe dans le base de données et lors de la création
 const bcrypt = require('bcrypt');
+// création d'un token d'authentification pour la vérification de l'utilisateur
 const jwt = require('jsonwebtoken');
+// sécurité pour le cryptage du mail lors de la création de l'utilisateur et appel pour son authentification
 const CryptoJS = require('crypto-js');
 
 
-
+// controller logique pour l'inscription // sécurité sur le mail (cryptoJS) et le password (bcrypt)
 exports.signup = (req, res, next) => {
     const emailCryptoJs = CryptoJS.HmacSHA256(req.body.email, `codeSecret`).toString();
     console.log(emailCryptoJs);
@@ -21,7 +26,8 @@ exports.signup = (req, res, next) => {
       .catch(error => res.status(500).json({ error }));
   };
 
-  exports.login = (req, res, next) => {
+// controller logique pour l'identification d'un utilisateur avec comparaison des mots de passe avec bcrypt et du mail avec CryptoJS
+exports.login = (req, res, next) => {
     const emailCryptoJs = CryptoJS.HmacSHA256(req.body.email, `codeSecret`).toString();
     console.log(emailCryptoJs)
     User.findOne({ email: emailCryptoJs })
@@ -46,4 +52,4 @@ exports.signup = (req, res, next) => {
                 .catch(error => res.status(500).json({ error }));
         })
         .catch(error => res.status(500).json({ error }));
- };
+};

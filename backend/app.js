@@ -2,10 +2,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
+//Appel des routes via le dossier routers
 const userRoutes = require('./routes/user');
 const saucesRoutes = require('./routes/sauces');
 const path = require('path');
 
+// connection pour la base de données MongoDB
 mongoose.connect('mongodb+srv://Pierrick:piquanteOPC@cluster0.g6cnyan.mongodb.net/?retryWrites=true&w=majority',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -30,9 +32,5 @@ app.use('/api/sauces', saucesRoutes)
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')))
 
-
-// app.use((req, res) => {
-//    res.json({ message: 'Votre requête a bien été reçue !' }); 
-// });
 
 module.exports = app;

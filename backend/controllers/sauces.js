@@ -14,7 +14,7 @@ exports.getAllSauces = (req, res, next) => {
     });
 };
 
-//création d'une sauce
+//création d'une sauce par un utilisateur avec lien de son id
 exports.createSauce = (req, res, next) => {
   const sauceItem = JSON.parse(req.body.sauce);
   delete sauceItem._id;
@@ -35,6 +35,7 @@ exports.createSauce = (req, res, next) => {
     });
 };
 
+// obtenir une sauce en particulier lors dun événement click
 exports.getOneSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
@@ -45,6 +46,7 @@ exports.getOneSauce = (req, res, next) => {
     });
 };
 
+// modification d'une sauce par son créateur
 exports.modifySauce = (req, res, next) => {
   const sauceItem = req.file
     ? {
@@ -54,7 +56,6 @@ exports.modifySauce = (req, res, next) => {
         }`,
       }
     : { ...req.body };
-
   delete sauceItem._userId;
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
@@ -74,6 +75,7 @@ exports.modifySauce = (req, res, next) => {
     });
 };
 
+// suppression d'une sauce fait par son créateur et de l'image qui a été enregistré dans la base de données
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
@@ -81,10 +83,10 @@ exports.deleteSauce = (req, res, next) => {
         res.status(401).json({ message: "Non autorisé" });
       } else {
         const filename = sauce.imageUrl.split("/images/")[1];
-        fs.unlink(`image/${filename}`, () => {
+        fs.unlink(`images/${filename}`, () => {
           Sauce.deleteOne({ _id: req.params.id })
             .then(() => {
-              res.status(200).json({ message: "Sauce bien supprimé" });
+              res.status(200).json({ message: "Sauce bien supprimée" });
             })
             .catch(error => res.status(401).json({ error }));
         });
@@ -95,34 +97,8 @@ exports.deleteSauce = (req, res, next) => {
     });
 };
 
+// création des likes et dislike pour un utilisateur
 exports.createLike = (req, res) => {
-  // Sauce.findOne({_id: req.params.id})
-  // .then(sauce => {
-  //   if (req.body.like == -1) {
-  //     sauce.dislike++;
-  //     sauce.usersDisliked.push(req.body.userId);
-  //     sauce.save()
-  //   }
-  //   if (req.body.like == 1){
-  //     sauce.like++;
-  //     sauce.usersLiked.push(req.body.userId);
-  //     sauce.save()
-  //   }
-
-  // })
-  // .catch(error => {res.status(404).json({ error })})
-
-  /* requête envoyé par body raw au format JSON avec ces 2 propriétés 
-{
-    "userId" : "6362ebf7959e60aa0f39bc40",
-    "like" : 0
-}
-*/
-  // console.log("je suis dans le controleur like");
-  // console.log(req.body.like)
-  // console.log(req.params)
-  // console.log({ _id: req.params.id})
-
   Sauce.findOne({ _id: req.params.id })
     .then(sauce => {
       // console.log(sauce)
